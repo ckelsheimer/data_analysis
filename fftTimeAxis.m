@@ -1,10 +1,10 @@
-function [w,p] = fftFreqAxis(t,varargin)
+function [t,p] = fftTimeAxis(w,varargin)
 %function [w,p]= fftFreqAxis(t,varargin)
 % 'time_units' = {'ps','fs','unitless'}
 % 'freq_units' = { {'wavenumbers','cm-1'},'Hz','eV',{'unitless','radians'}}
 % 'fftshift' = {'on','off'}
 % 'zeropad' = zeropaddedlength
-% 'undersampling' = undersampling
+% 'undersampling' = undersampling (NOT IMPLEMENTED)
 % 'direction' = {'forward','fft','sgrsfft','reverse','inverse','ifft','sgrsifft'}
 %    'forward' or 'fft' indicate that the function fft was used. 'reverse',
 %    'inverse' and 'ifft' all indicate that an inverse fft was used. The
@@ -12,15 +12,17 @@ function [w,p] = fftFreqAxis(t,varargin)
 %    exp(iwt) to positive frequencies, so common formulas like exp(-iwt) in
 %    response function calculations would map to negative frequencies.
 %    Using the ifft maps them back to positive frequencies.
-% 'fft_type' = equivalent to 'direction'
+% 'fft_type' = equiivalent to 'direction'
 % p is an optional struct of 
 % p.resolution
 % p.centerfreq
-% p.delta_w (width in freq space, i.e. <a>)
-% p.dw (frequency spacing)
-% p.ind (index of the band containing the center freq)
+% p.delta_t (width in time space, i.e. <a>)
+% p.dt (frequency spacing)
+% p.ind (index of the band containing the center time)
 %
-% a quick word on undersampling: when I say undersampling of n, I mean that
+% Undersampling is not implemented yet
+
+% OLD TEXT: a quick word on undersampling: when I say undersampling of n, I mean that
 % the time step is (2n+1)*dt_ny, where dt_ny is the nyquist sampling rate
 % dt_ny=1/(4*nu_main), where nu_main is the central frequency in Hz (not
 % rad or cm-1) so if the main frequency is 1600 cm-1 (20 fs period), the
@@ -40,11 +42,11 @@ global c_cm q h
 %set default values
 time_units = 'ps';
 freq_units = 'wavenumbers';
-shift = 'on';
+shift = 'off';
 n_under = 0;
 flag_fft = true; %true = forward fft, false means inverse fft 
 forward_fft_list = {'fft' 'sgrsfft'};
-n_t = length(t);
+n_w = length(w);
 
 %read optional arguments
 while length(varargin)>=2
@@ -60,9 +62,10 @@ while length(varargin)>=2
           shift = value;
       case {'zeropad','zero_pad'}
           if ~isempty(value)&&value~=0
-              n_t = value;
+              n_w = value;
           end
       case {'undersampling','n_under'}
+          error('data_analysis:notImplemented','Undersampling not yet implemented in fftTimeAxis.')
           n_under = value;
       case {'direction','fft_type'}
           if any(strcmpi(value,forward_fft_list))
@@ -110,46 +113,45 @@ switch time_units
     error('Could not deterimine the time units you want in fftFreqAxis');    
 end
 
-
-dt = t(2)-t(1);
-a=1/dt/conversion;
-dw = a/n_t;
+dw = w(2)-w(1);
+a=1/dw/conversion;
+dt = a/n_w;
 switch lower(shift)
   case 'on'
-    if mod(n_t,2)==0
+    if mod(n_w,2)==0
       %disp('even')
       if flag_fft
-          w=(-a/2:dw:a/2-dw);
+          t = (-a/2:dt:a/2-dt);
       else
-          w=(-a/2+dw:dw:a/2);
+          t=(-a/2+dt:dt:a/2);
       end
     else
       %disp('odd')
       if flag_fft
-          w=(-a/2:dw:a/2-dw)+dw/2;
+          t=(-a/2:dt:a/2-dw)+dt/2;
       else
           warning('data_analysis:untestedFeature',...
               'freq axis for ifft with an odd number of points has not yet been tested thoroughly! Watchout!');
-          w=(-a/2+dw:dw:a/2)-dw/2;
+          t=(-a/2+dt:dt:a/2)-dt/2;
       end
     end
   case 'off'
-    w = (0:(n_t-1))*dw;
+    t = (0:(n_w-1))*dt;
   otherwise
     error(['Couldn''t determine whether or not to fftshift axis with shift ' shift]);
 end
 
-resolution = 1/(n_t*dt*conversion);
-w_center = (2*n_under+1)/(4*dt*conversion);
-w = w+w_center*(1-mod(2*n_under+1,4)/(2*n_under+1));
+resolution = 1/(n_w*dw*conversion);
+%w_center = (2*n_under+1)/(4*dt*conversion);
+%w = w+w_center*(1-mod(2*n_under+1,4)/(2*n_under+1));
 
 p.resolution = resolution;
-p.centerfreq = w_center;
-p.delta_w = a;
-p.dw = dw;
+%p.centerfreq = w_center;
+p.delta_t = a;
+p.dt = dt;
 
-ind = find(w >= w_center-a/4 &w <= w_center+a/4);
-p.ind = ind;
+%ind = find(w >= w_center-a/4 &w <= w_center+a/4);
+%p.ind = ind;
 
 %disp(['res ' num2str(resolution)]);
 %disp(['center ' num2str(w_center)]);
