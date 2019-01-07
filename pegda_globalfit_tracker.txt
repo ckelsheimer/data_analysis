@@ -54,7 +54,24 @@ Minimized Square Error = 3.2425e+04
 
 Delta1 (cm-1) tau1 (ps) T2 (ps) anh (cm-1) phi (deg) mu12_2 k1 k2 k3
 
-
+% 
+for ii = 1:size(S,3)
+    for jj = ii
+    if(ii>1),pause,end
+    n1 = abs(min(min(dataMatrix(:,:,jj)))); %normalization
+    n2 = abs(min(min(S(:,:,ii))));
+    
+%calculated spectrum
+figure(1),
+    clf,my2dPlot(w1,w3,S(:,:,ii)./n2,'n_contours',20)
+%experimental spectrum
+figure(2)
+    my2dPlot(w1,w3,dataMatrix(:,:,jj)./n1,'n_contours',20)
+%residual
+figure(3)
+    my2dPlot(w1,w3,dataMatrix(:,:,jj)./n1-S(:,:,ii)./n2,'n_contours',20);
+    end
+end
 
 Original parameters
 1.750000 110.000000 7.600000 23.500000 0.000000 1.510000 0.002800 0.001560 0.019529 
@@ -87,3 +104,66 @@ Output (fit) parameters
 1.769096 106.821718 7.739525 23.526457 1.746463 1.513426 0.002715 0.001328 0.015982 
 
 Minimized Square Error = 34245.025490
+
+%% BEYOND THIS POINT IS FITITNG "wet" PEGDA data from 02/2018
+
+
+----
+07-Jan-2019 15:20:36
+
+Delta1 (cm-1) tau1 (ps) T2 (ps) anh (cm-1) phi (deg) mu12_2 k1 k2 k3
+
+
+Original parameters
+1.750000 110.000000 10.000000 23.500000 -9.000000 2.000000 0.002800 0.001500 0.019191 
+RT = 23.000000
+
+Lower bounds
+0.000000 10.000000 0.100000 20.000000 -40.000000 1.400000 0.000100 0.000100 0.000100 
+Upper bounds
+5.000000 500.000000 15.000000 30.000000 40.000000 2.100000 1.000000 1.000000 1.000000 
+
+Output (fit) parameters
+2.071542 54.400430 6.740638 23.668784 -5.648434 2.100000 0.002506 0.001375 0.012515 
+
+Minimized Square Error = 21549.530747
+
+----
+07-Jan-2019 15:37:31
+
+Delta1 (cm-1) tau1 (ps) T2 (ps) anh (cm-1) phi (deg) mu12_2 k1 k2 k3
+
+
+Original parameters
+1.750000 110.000000 10.000000 23.500000 -9.000000 2.000000 0.002800 0.001500 0.019191 
+RT = 23.000000
+
+Lower bounds
+0.000000 10.000000 0.100000 20.000000 -40.000000 1.400000 0.000100 0.000100 0.000100 
+Upper bounds
+5.000000 500.000000 15.000000 30.000000 40.000000 2.300000 1.000000 1.000000 1.000000 
+
+Output (fit) parameters
+2.019770 62.555578 6.805515 23.676830 -5.542769 2.300000 0.003914 0.001802 0.016579 
+
+Minimized Square Error = 18300.749743
+
+----
+07-Jan-2019 15:39:51
+
+Delta1 (cm-1) tau1 (ps) T2 (ps) anh (cm-1) phi (deg) mu12_2 k1 k2 k3
+
+
+Original parameters
+1.750000 110.000000 10.000000 23.500000 -9.000000 2.000000 0.002800 0.001500 0.019191 
+RT = 23.000000
+
+Lower bounds
+0.000000 10.000000 0.100000 20.000000 -40.000000 1.400000 0.000100 0.000100 0.000100 
+Upper bounds
+5.000000 500.000000 15.000000 30.000000 40.000000 2.500000 1.000000 1.000000 1.000000 
+
+Output (fit) parameters
+1.978805 70.486291 6.865341 23.683247 -5.448601 2.455439 0.004835 0.002055 0.019101 
+
+Minimized Square Error = 17584.974972

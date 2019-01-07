@@ -26,9 +26,8 @@ function [w,p] = fftFreqAxis(t,varargin)
 % rad or cm-1) so if the main frequency is 1600 cm-1 (20 fs period), the
 % nyquist dt_ny = 5 fs, so undersampling n=1 means dt = (2*1+1)*5 =15 fs,
 % n=2 => 25 fs etc
-%
-%defined explictly for parpool to work
-global c_cm q h
+
+% global c_cm q h
 c_cm = 2.9979e10;
 q = 1.6e-19;
 h = 6.626e-34;
@@ -45,41 +44,41 @@ shift = 'on';
 n_under = 0;
 flag_fft = true; %true = forward fft, false means inverse fft 
 forward_fft_list = {'fft' 'sgrsfft'};
-n_t = length(t);
+n_t = 2*length(t);
 
-%read optional arguments
-while length(varargin)>=2
-  arg = varargin{1};
-  value = varargin{2};
-
-  switch lower(arg)
-      case {'time','time_units'}
-          time_units= value;
-      case {'freq','freq_units'}
-          freq_units = value;
-      case {'fftshift','shift'}
-          shift = value;
-      case {'zeropad','zero_pad'}
-          if ~isempty(value)&&value~=0
-              n_t = value;
-          end
-      case {'undersampling','n_under'}
-          n_under = value;
-      case {'direction','fft_type'}
-          if any(strcmpi(value,forward_fft_list))
-              flag_fft = true;
-          else
-              flag_fft = false;
-          end
-      otherwise
-      warning('data_analysis:unknownArgument',['Unknown option ' arg ' in fftFreqAxis']);
-  end
-  varargin = varargin(3:end);
-end
+% %read optional arguments
+% ii = -1;
+% while ii<length(varargin)-1;%length(varargin)>=2
+%     ii = ii+2;
+%  
+%   switch lower(varargin{ii})
+%       case {'time','time_units'}
+%           time_units= varargin{ii+1};
+%       case {'freq','freq_units'}
+%           freq_units = varargin{ii+1};
+%       case {'fftshift','shift'}
+%           shift =varargin{ii+1};
+%       case {'zeropad','zero_pad'}
+%           if ~isempty(varargin{ii+1})&&varargin{ii+1}~=0
+%               n_t = varargin{ii+1};
+%           end
+%       case {'undersampling','n_under'}
+%           n_under = varargin{ii+1};
+%       case {'direction','fft_type'}
+%           if any(strcmpi(varargin{ii+1},forward_fft_list))
+%               flag_fft = true;
+%           else
+%               flag_fft = false;
+%           end
+%       otherwise
+% %       warning('data_analysis:unknownArgument',['Unknown option ' arg ' in fftFreqAxis']);
+%   end
+%   %varargin = varargin(3:end);
+% end
 
 if n_under>0 && strcmpi(shift,'on')
   %shift = 'off';
-  warning('data_analysis:untested_feature','fftFreqAxis: use p.ind to find the right part of the spectrum');
+%   warning('data_analysis:untested_feature','fftFreqAxis: use p.ind to find the right part of the spectrum');
 end
 
 if any(isempty([c_cm h q ]))
@@ -90,11 +89,11 @@ switch lower(freq_units)
   case {'wavenumbers','cm-1'}
     conversion =conversion*c_cm;
   case 'hz'
-    warning([freq_units ' not yet tested!']);
+%     warning([freq_units ' not yet tested!']);
   case 'ev'
     conversion = conversion*q/h;
   case {'unitless','radians'}
-    warning([freq_units ' not yet tested!']);
+%     warning([freq_units ' not yet tested!']);
     conversion = conversion/(2*pi);
   otherwise
     error('Could not deterimine the frequency units you want in fftFreqAxis');    
@@ -105,7 +104,7 @@ switch time_units
   case 'fs'
     conversion = conversion*1e-15;
   case 'unitless'
-    warning([time_units ' not yet tested!']);
+%     warning([time_units ' not yet tested!']);
     conversion = conversion;
   otherwise
     error('Could not deterimine the time units you want in fftFreqAxis');    
@@ -129,8 +128,8 @@ switch lower(shift)
       if flag_fft
           w=(-a/2:dw:a/2-dw)+dw/2;
       else
-          warning('data_analysis:untestedFeature',...
-              'freq axis for ifft with an odd number of points has not yet been tested thoroughly! Watchout!');
+%           warning('data_analysis:untestedFeature',...
+%               'freq axis for ifft with an odd number of points has not yet been tested thoroughly! Watchout!');
           w=(-a/2+dw:dw:a/2)-dw/2;
       end
     end
