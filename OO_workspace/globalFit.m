@@ -29,6 +29,7 @@ else
     warning('Could not set parameters! Look for the right options functon for your installation.');
 end
 
+opt = optimoptions(opt,'UseParallel',true);
 
 tic
 

@@ -716,23 +716,11 @@ if isfield(options,'kin')
     
     P=-fftshift(real(fliplr(circshift(Br,[0 -1]))+Bn))*double(a1(k2,k3)*a3(k1,k2,k3,t2)); %coeff between - & fft
     P = P - fftshift(real(fliplr(circshift(Rr,[0 -1]))+Rn))*double(a1(k2,k3)*a3(k1,k2,k3,t2)*a8(k1,k2,k3,t2)); %or here ;
-    P = P - fftshift(real(fliplr(circshift(Brd,[0 -1]))+Bnd))*double(a2(k2,k3)*a6(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Rrd,[0 -1]))+Rnd))*double(a2(k2,k3)*a6(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Brl,[0 -1]))+Bnl))*double(a2(k2,k3)*a5(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Rrl,[0 -1]))+Rnl))*double(a2(k2,k3)*a5(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Brr,[0 -1]))+Bnr))*double(a1(k2,k3)*a4(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Rrr,[0 -1]))+Rnr))*double(a1(k2,k3)*a4(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Hr,[0 -1]))+Hn))*double(a1(k2,k3)*a7(k1,k2,k3,t2));
+
 else
+   
      P=-fftshift(real(fliplr(circshift(Br,[0 -1]))+Bn)); %coeff between - & fft
     P = P - fftshift(real(fliplr(circshift(Rr,[0 -1]))+Rn)); %or here ;
-    P = P - fftshift(real(fliplr(circshift(Brd,[0 -1]))+Bnd));
-    P = P - fftshift(real(fliplr(circshift(Rrd,[0 -1]))+Rnd));
-    P = P - fftshift(real(fliplr(circshift(Brl,[0 -1]))+Bnl));
-    P = P - fftshift(real(fliplr(circshift(Rrl,[0 -1]))+Rnl));
-    P = P - fftshift(real(fliplr(circshift(Brr,[0 -1]))+Bnr));
-    P = P - fftshift(real(fliplr(circshift(Rrr,[0 -1]))+Rnr));
-   P = P - fftshift(real(fliplr(circshift(Hr,[0 -1]))+Hn));
 end    
 
     [W1,W3] = meshgrid(w,w);

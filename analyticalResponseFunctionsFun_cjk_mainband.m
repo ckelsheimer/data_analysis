@@ -1,4 +1,4 @@
-function [out,extra] = analyticalResponseFunctionsFun_cjk(p,w1_in,w3_in,options)
+function [out,extra] = analyticalResponseFunctionsFun_cjk_mainband(p,w1_in,w3_in,options)
 %Create simulated spectral data using an analytical form for the nth-order
 %response function (see Hamm and Zanni Ch. 7 in particular).
 %  [OUT,EXTRA] = analyticalResponseFunctionsFun(P,W1_IN,W3_IN,OPTIONS) will
@@ -37,9 +37,6 @@ function [out,extra] = analyticalResponseFunctionsFun_cjk(p,w1_in,w3_in,options)
 
 damping = options.damping;
 t2_array = options.t2_array; %can be a vector of times
-
-%for 5th order also define t4 times (not used for 2DIR)
-t4_array = t2_array;
 n_t2_array = length(t2_array);
 
 flag_print = 0; %1 => figures or 0 => no figures
@@ -59,7 +56,6 @@ else
 end
 
 w_0_cm = options.w_0_cm;% %center frequency
-w_nu2_cm = options.w_nu2_cm; %shift to bend/stretch diagonal peak
 phi = 0; %phase shift (radians) exp(1i*phi)
 mu01_2 = 1; %default
 mu12_2 = 2; %default
@@ -140,7 +136,6 @@ end
 
 dw = w(2)-w(1);
 w_0 = w_0_cm*2*pi*wavenumbersToInvPs; %convert to radians
-w_nu2 = w_nu2_cm*2*pi*wavenumbersToInvPs;
   
 c2 = [];
 g = [];
@@ -569,72 +564,73 @@ if order==3
     Rr=exp(-g(T1)+g(t2)-g(T3)-g(T1+t2)-g(t2+T3)+g(T1+t2+T3)).*(-mu12_2.*exp(-1i*anh.*T3)); %need these too
         Rn=exp(-g(T1)-g(t2)-g(T3)+g(T1+t2)+g(t2+T3)-g(T1+t2+T3)).*(-mu12_2.*exp(-1i*anh.*T3));
         
-%  P1=exp(-g(T1)+g(t2)-g(T3)-g(T1+t2)-g(t2+T3)+g(T1+t2+T3)).*(2*mu01_2-mu12_2.*exp(-1i*anh.*T3)); %need these too
-%         P2=exp(-g(T1)-g(t2)-g(T3)+g(T1+t2)+g(t2+T3)-g(T1+t2+T3)).*(2*mu01_2-mu12_2.*exp(-1i*anh.*T3));
-%   %HGS - Red Peak Only      
-%  P9r=exp(-g(T1)+g(t2)-g(T3)-g(T1+t2)-g(t2+T3)+g(T1+t2+T3)).*(-mu12_2.*exp(-1i*anh.*T3)); %need these too
-%         P9n=exp(-g(T1)-g(t2)-g(T3)+g(T1+t2)+g(t2+T3)-g(T1+t2+T3)).*(-mu12_2.*exp(-1i*anh.*T3));
+% %  P1=exp(-g(T1)+g(t2)-g(T3)-g(T1+t2)-g(t2+T3)+g(T1+t2+T3)).*(2*mu01_2-mu12_2.*exp(-1i*anh.*T3)); %need these too
+% %         P2=exp(-g(T1)-g(t2)-g(T3)+g(T1+t2)+g(t2+T3)-g(T1+t2+T3)).*(2*mu01_2-mu12_2.*exp(-1i*anh.*T3));
+% %   %HGS - Red Peak Only      
+% %  P9r=exp(-g(T1)+g(t2)-g(T3)-g(T1+t2)-g(t2+T3)+g(T1+t2+T3)).*(-mu12_2.*exp(-1i*anh.*T3)); %need these too
+% %         P9n=exp(-g(T1)-g(t2)-g(T3)+g(T1+t2)+g(t2+T3)-g(T1+t2+T3)).*(-mu12_2.*exp(-1i*anh.*T3));
+% 
+% %     %bend/stretch diag peak
+% %     P3 = P1.*exp(1i*w_nu2.*(-T1+T3));
+% %     P4 = P2.*exp(1i*w_nu2.*(T1+T3));
+% 
+%         %coupled bend/stretch diagonal peak blue
+%      Brd = Br.*exp(1i*w_nu2.*(-T1+T3));
+%      Bnd = Bn.*exp(1i*w_nu2.*(T1+T3));
+%         %coupled bend/stretch diagonal peak red
+%      Rrd = Rr.*exp(1i*w_nu2.*(-T1+T3));
+%      Rnd = Rn.*exp(1i*w_nu2.*(T1+T3));
+%      
+% %     %bend/stretch cp1
+% %     P5 = P1.*exp(1i*w_nu2.*(T3));
+% %     P6 = P2.*exp(1i*w_nu2.*(T3));
+% 
+%         %bend/stretch w1 -> w3 peak blue (Blue rephasing/nonrephasing righthand)
+%      Brr = Br.*exp(1i*w_nu2.*(T3));
+%      Bnr = Bn.*exp(1i*w_nu2.*(T3));
+%         %bend/stretch w1 --> w3 peak red (Red rephasing/nonrephasing righthand)
+%      Rrr = Rr.*exp(1i*w_nu2.*(T3));
+%      Rnr = Rn.*exp(1i*w_nu2.*(T3));
+%      
+% %     %bend/stretch cp2
+% %     P7 = P1.*exp(1i*w_nu2.*(-T1));
+% %     P8 = P2.*exp(1i*w_nu2.*(T1));
+% 
+%         %bend/stretch w3-->w1 peak blue (Blue rephasing/nonrephasing lefthand)
+%      Brl = Br.*exp(1i*w_nu2.*(-T1));
+%      Bnl = Bn.*exp(1i*w_nu2.*(T1));
+%         %bend/stretch w3 --> w1 peak red (Red rephasing/nonrephasing lefthand)
+%      Rrl = Rr.*exp(1i*w_nu2.*(-T1));
+%      Rnl = Rn.*exp(1i*w_nu2.*(T1));
+%      
+% %     %HGS - needs to be shifted above the original ESA peak so -T3 (idk it
+% %     %worked)
+% %     P9r = P9r.*exp(1i*w_nu2.*(-T3));
+% %     P9n = P9n.*exp(1i*w_nu2.*(-T3));
+%      
+%         %HGS
+%      Hr = Rr.*exp(1i*w_nu2.*(-T3));
+%      Hn = Rn.*exp(1i*w_nu2.*(-T3));
 
-%     %bend/stretch diag peak
-%     P3 = P1.*exp(1i*w_nu2.*(-T1+T3));
-%     P4 = P2.*exp(1i*w_nu2.*(T1+T3));
-
-        %coupled bend/stretch diagonal peak blue
-     Brd = Br.*exp(1i*w_nu2.*(-T1+T3));
-     Bnd = Bn.*exp(1i*w_nu2.*(T1+T3));
-        %coupled bend/stretch diagonal peak red
-     Rrd = Rr.*exp(1i*w_nu2.*(-T1+T3));
-     Rnd = Rn.*exp(1i*w_nu2.*(T1+T3));
-     
-%     %bend/stretch cp1
-%     P5 = P1.*exp(1i*w_nu2.*(T3));
-%     P6 = P2.*exp(1i*w_nu2.*(T3));
-
-        %bend/stretch w1 -> w3 peak blue (Blue rephasing/nonrephasing righthand)
-     Brr = Br.*exp(1i*w_nu2.*(T3));
-     Bnr = Bn.*exp(1i*w_nu2.*(T3));
-        %bend/stretch w1 --> w3 peak red (Red rephasing/nonrephasing righthand)
-     Rrr = Rr.*exp(1i*w_nu2.*(T3));
-     Rnr = Rn.*exp(1i*w_nu2.*(T3));
-     
-%     %bend/stretch cp2
-%     P7 = P1.*exp(1i*w_nu2.*(-T1));
-%     P8 = P2.*exp(1i*w_nu2.*(T1));
-
-        %bend/stretch w3-->w1 peak blue (Blue rephasing/nonrephasing lefthand)
-     Brl = Br.*exp(1i*w_nu2.*(-T1));
-     Bnl = Bn.*exp(1i*w_nu2.*(T1));
-        %bend/stretch w3 --> w1 peak red (Red rephasing/nonrephasing lefthand)
-     Rrl = Rr.*exp(1i*w_nu2.*(-T1));
-     Rnl = Rn.*exp(1i*w_nu2.*(T1));
-     
-%     %HGS - needs to be shifted above the original ESA peak so -T3 (idk it
-%     %worked)
-%     P9r = P9r.*exp(1i*w_nu2.*(-T3));
-%     P9n = P9n.*exp(1i*w_nu2.*(-T3));
-     
-        %HGS
-     Hr = Rr.*exp(1i*w_nu2.*(-T3));
-     Hn = Rn.*exp(1i*w_nu2.*(-T3));
-%Adding back in phase information
+    %Adding back in phase information
         Br = exp(1i*phi).*Br;
         Bn = exp(-1i*phi).*Bn;
         Rr = exp(1i*phi).*Rr;
         Rn = exp(-1i*phi).*Rn;
-        Brd = exp(1i*phi).*Brd;
-        Bnd = exp(-1i*phi).*Bnd;
-        Rrd = exp(1i*phi).*Rrd;
-        Rnd = exp(-1i*phi).*Rnd;
-        Brr = exp(1i*phi).*Brr;
-        Bnr = exp(-1i*phi).*Bnr;
-        Rrr = exp(1i*phi).*Rrr;
-        Rnr = exp(-1i*phi).*Rnr;
-        Brl = exp(1i*phi).*Brl;
-        Bnl = exp(-1i*phi).*Bnl;
-        Rrl = exp(1i*phi).*Rrl;
-        Rnl = exp(-1i*phi).*Rnl;
-        Hr = exp(1i*phi).*Hr;
-        Hn = exp(-1i*phi).*Hn;
+%         Brd = exp(1i*phi).*Brd;
+%         Bnd = exp(-1i*phi).*Bnd;
+%         Rrd = exp(1i*phi).*Rrd;
+%         Rnd = exp(-1i*phi).*Rnd;
+%         Brr = exp(1i*phi).*Brr;
+%         Bnr = exp(-1i*phi).*Bnr;
+%         Rrr = exp(1i*phi).*Rrr;
+%         Rnr = exp(-1i*phi).*Rnr;
+%         Brl = exp(1i*phi).*Brl;
+%         Bnl = exp(-1i*phi).*Bnl;
+%         Rrl = exp(1i*phi).*Rrl;
+%         Rnl = exp(-1i*phi).*Rnl;
+%         Hr = exp(1i*phi).*Hr;
+%         Hn = exp(-1i*phi).*Hn;
         
     if flag_rotating_frame == false
         P1 = exp(1i*w_0.*(-T1+T3)).*P1;
@@ -664,76 +660,38 @@ if order==3
         Rr=sgrsfft2(Rr,n_zp);
         Rn=sgrsfft2(Rn,n_zp);
         
-        Brd=sgrsfft2(Brd,n_zp);
-        Bnd=sgrsfft2(Bnd,n_zp);
-       
-        Rrd=sgrsfft2(Rrd,n_zp);
-        Rnd=sgrsfft2(Rnd,n_zp);
-        
-        Brl=sgrsfft2(Brl,n_zp);
-        Bnl=sgrsfft2(Bnl,n_zp);
-        
-        Rrl=sgrsfft2(Rrl,n_zp);
-        Rnl=sgrsfft2(Rnl,n_zp);
-        
-        Brr=sgrsfft2(Brr,n_zp);
-        Bnr=sgrsfft2(Bnr,n_zp);
-       
-        Rrr=sgrsfft2(Rrr,n_zp);
-        Rnr=sgrsfft2(Rnr,n_zp);
-        
-        Hr=sgrsfft2(Hr,n_zp);
-        Hn=sgrsfft2(Hn,n_zp);
+%         Brd=sgrsfft2(Brd,n_zp);
+%         Bnd=sgrsfft2(Bnd,n_zp);
+%        
+%         Rrd=sgrsfft2(Rrd,n_zp);
+%         Rnd=sgrsfft2(Rnd,n_zp);
+%         
+%         Brl=sgrsfft2(Brl,n_zp);
+%         Bnl=sgrsfft2(Bnl,n_zp);
+%         
+%         Rrl=sgrsfft2(Rrl,n_zp);
+%         Rnl=sgrsfft2(Rnl,n_zp);
+%         
+%         Brr=sgrsfft2(Brr,n_zp);
+%         Bnr=sgrsfft2(Bnr,n_zp);
+%        
+%         Rrr=sgrsfft2(Rrr,n_zp);
+%         Rnr=sgrsfft2(Rnr,n_zp);
+%         
+%         Hr=sgrsfft2(Hr,n_zp);
+%         Hn=sgrsfft2(Hn,n_zp);
 
 
-    %change how data packaged
-%     P=-fftshift(real(fliplr(circshift(P1,[0 -1]))+P2));
-%     P = P - fftshift(real(fliplr(circshift(P3,[0 -1]))+P4));
-%     P = P - fftshift(real(fliplr(circshift(P5,[0 -1]))+P6));
-%     P = P - fftshift(real(fliplr(circshift(P7,[0 -1]))+P8));
-%     P = P - fftshift(real(fliplr(circshift(P9r,[0 -1]))+P9n));
-
-    k1 = p(end-2);
-    k2 = p(end-1);
-    k3 = p(end);
-    
-    
-    %added 1/4/19 - prevents code from breaking if kinetics are not present
-    
-if isfield(options,'kin')
-    
-    a1 = options.kin{1};
-    a2 = options.kin{2};
-    a3 = options.kin{3};
-    a4 = options.kin{4};
-    a5 = options.kin{5};
-    a6 = options.kin{6};
-    a7 = options.kin{7};
-    a8 = options.kin{8};
-end
-
-if isfield(options,'kin')
-    
-    P=-fftshift(real(fliplr(circshift(Br,[0 -1]))+Bn))*double(a1(k2,k3)*a3(k1,k2,k3,t2)); %coeff between - & fft
-    P = P - fftshift(real(fliplr(circshift(Rr,[0 -1]))+Rn))*double(a1(k2,k3)*a3(k1,k2,k3,t2)*a8(k1,k2,k3,t2)); %or here ;
-    P = P - fftshift(real(fliplr(circshift(Brd,[0 -1]))+Bnd))*double(a2(k2,k3)*a6(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Rrd,[0 -1]))+Rnd))*double(a2(k2,k3)*a6(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Brl,[0 -1]))+Bnl))*double(a2(k2,k3)*a5(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Rrl,[0 -1]))+Rnl))*double(a2(k2,k3)*a5(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Brr,[0 -1]))+Bnr))*double(a1(k2,k3)*a4(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Rrr,[0 -1]))+Rnr))*double(a1(k2,k3)*a4(k1,k2,k3,t2));
-    P = P - fftshift(real(fliplr(circshift(Hr,[0 -1]))+Hn))*double(a1(k2,k3)*a7(k1,k2,k3,t2));
-else
      P=-fftshift(real(fliplr(circshift(Br,[0 -1]))+Bn)); %coeff between - & fft
     P = P - fftshift(real(fliplr(circshift(Rr,[0 -1]))+Rn)); %or here ;
-    P = P - fftshift(real(fliplr(circshift(Brd,[0 -1]))+Bnd));
-    P = P - fftshift(real(fliplr(circshift(Rrd,[0 -1]))+Rnd));
-    P = P - fftshift(real(fliplr(circshift(Brl,[0 -1]))+Bnl));
-    P = P - fftshift(real(fliplr(circshift(Rrl,[0 -1]))+Rnl));
-    P = P - fftshift(real(fliplr(circshift(Brr,[0 -1]))+Bnr));
-    P = P - fftshift(real(fliplr(circshift(Rrr,[0 -1]))+Rnr));
-   P = P - fftshift(real(fliplr(circshift(Hr,[0 -1]))+Hn));
-end    
+%     P = P - fftshift(real(fliplr(circshift(Brd,[0 -1]))+Bnd));
+%     P = P - fftshift(real(fliplr(circshift(Rrd,[0 -1]))+Rnd));
+%     P = P - fftshift(real(fliplr(circshift(Brl,[0 -1]))+Bnl));
+%     P = P - fftshift(real(fliplr(circshift(Rrl,[0 -1]))+Rnl));
+%     P = P - fftshift(real(fliplr(circshift(Brr,[0 -1]))+Bnr));
+%     P = P - fftshift(real(fliplr(circshift(Rrr,[0 -1]))+Rnr));
+%    P = P - fftshift(real(fliplr(circshift(Hr,[0 -1]))+Hn));
+%  
 
     [W1,W3] = meshgrid(w,w);
     P = P./abs(min(P(:))); %normalize to the 01 band (negative)

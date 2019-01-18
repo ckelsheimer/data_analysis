@@ -6,7 +6,7 @@
             cd('/home/sgrlab/Documents/CJK/data/') %LINUX MACHINE (for CJ's data)
     end
 
-fname = 'globalfit_tracker.txt';
+fname = 'pegda_globalfit_tracker.txt';
 fid = fopen(fname,'a');
 
 fprintf(fid,'\n');

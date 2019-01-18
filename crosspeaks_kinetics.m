@@ -1,4 +1,4 @@
-%% Other Assorted Calculations
+c%% Other Assorted Calculations
 dE = 667;%cm^1
 %assumption: kT in wavenumbers at 298K = 207cm^-1
 Keq = 2*exp(-dE/207);

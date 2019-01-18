@@ -1,12 +1,12 @@
     
     switch computer
         case 'MACI64'
-            cd('~/Box/CJ_Kelsheimer/PEGDA_HGS') %MAC (for CJ's data)
+            cd('~/Box/SGRLAB RESEARCH/Globalfitting_data') %MAC (for CJ's data)
         case 'GLNXA64'
             cd('/home/sgrlab/Documents/CJK/data/') %LINUX MACHINE (for CJ's data)
     end
 
-fname = 'globalfit_tracker.txt';
+fname = 'emimpegda_globalfit_tracker.txt';
 fid = fopen(fname,'a');
 
 fprintf(fid,'\n');
@@ -18,11 +18,14 @@ fprintf(fid,'%s %s %s %s %s %s %s %s %s\n',options.pnames{:});
 fprintf(fid,'\n');
 fprintf(fid,'\n');
 
+fprintf(fid,'%s\n',options.damping);
+fprintf(fid,'\n');
+fprintf(fid,'\n');
+
 fprintf(fid,'Original parameters\n');
 fprintf(fid,'%f ',p0);
 fprintf(fid,'\n');
-fprintf(fid,'RT = %f\n',RT);
-fprintf(fid,'\n');
+
 
 fprintf(fid,'Lower bounds\n');
 fprintf(fid,'%f ',lb);
